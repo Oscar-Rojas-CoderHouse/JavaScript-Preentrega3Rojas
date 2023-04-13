@@ -1,0 +1,169 @@
+/* ----Varibales---- */
+:root {
+    --sm:16px;
+    --md:18px;
+    --lg:22px;
+    --h1:26px;
+    --bg-nav:#B09B71;
+    --color-title:#1d1a16;
+    --color-hero: #ffffff;
+    --color-hero2: #bbbbbb;
+    --border:#9e9e9e;
+}
+
+/* ----Estilos Generales---- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap');
+
+body {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.botones {
+    text-decoration: none;
+    border: 1px solid var(--border);
+    background-color: black;
+    color: var(--color-hero2);
+    padding: 4px 8px;
+} 
+
+/* ----Header---- */
+header nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: var(--bg-nav);
+}
+header nav .navIzquierdo {
+    text-align: center;
+}
+header nav .navIzquierdo h6 {
+    font-size: calc(var(--sm) - 2px);
+    font-weight: 300;
+}
+header nav .navIzquierdo h3{
+    transform: rotateZ(-10deg);
+    margin-top: 8px;
+    font-size: var(--md);
+}
+header nav .navDerecho ul{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+header nav .navDerecho ul li{
+    list-style: none;
+    margin: 0 12px;
+    font-size: var(--sm);
+    
+}
+header nav .navDerecho ul li a{
+    text-decoration: none;
+    color: var(--color-title);
+}
+header nav .navDerecho ul li img{
+    cursor: pointer;
+}
+
+/* ----Main - Pagina Index---- */
+.contenidoPrincipal .hero {
+    height: calc(100vh - 70px);
+    width: 100%;
+    background-image: url('https://images.pexels.com/photos/3734025/pexels-photo-3734025.jpeg?auto=compress&cs=tinysrgb&w=1600');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.contenidoPrincipal .hero h1 {
+    font-size: var(--h1);
+    color: var(--color-hero);
+}
+.contenidoPrincipal .hero p {
+    font-size: var(--md);
+    color: var(--color-hero2);
+    margin-top: 24px;
+    margin-bottom: 50px;
+}
+.contenidoPrincipal .bienvenidos, .nosotros {
+    width: 80%;
+    margin: 0 auto;
+}
+.contenidoPrincipal .bienvenidos div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.contenidoPrincipal .bienvenidos div img,
+.nosotros div img{
+    width: 350px;
+    height: 450px;
+    object-fit: cover;
+}
+.contenidoPrincipal .bienvenidos div div{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    margin-left: 60px;
+}
+.contenidoPrincipal .bienvenidos div div h3,
+.nosotros div div h3 {
+    font-size: var(--lg);
+    margin-bottom: 8px;
+}
+.contenidoPrincipal .nosotros div {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+}
+.contenidoPrincipal .nosotros div div{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    margin-right: 60px;
+}
+
+/* ----Footer---- */
+footer {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,93,9,1) 55%, rgba(196,173,17,1) 87%);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+footer ul:nth-child(1) li{
+    list-style: none;
+    color: var(--color-hero2);
+    padding-left: 20px;
+    margin-bottom: 8px;
+
+}
+footer ul:nth-child(2){
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+footer ul:nth-child(2) li{
+    list-style: none;
+}
+footer iframe {
+    margin-right: 20px;
+}
