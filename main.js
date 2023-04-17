@@ -286,8 +286,6 @@ function renderCarrito (listaProductos, nodoPadre) {
     btnComprar.addEventListener("click", vaciarCarrito)
 }
 
-
-
 // -----Variables que almacenan elementos del HTML
 const sectionRenderProductos = document.querySelector(".renderProductos")
 const imagenPanes = document.querySelector("#panes")
@@ -358,12 +356,12 @@ function agregarProducto (e){
     let productoBuscado = productos.find(producto => producto.id == e.target.id)
             if (productoBuscado){
                 let posicionProducto = carrito.findIndex(producto => producto.id === productoBuscado.id)
-                if (posicionProducto != -1 && productoBuscado.inventario>=1){
+                if (posicionProducto != -1 && productoBuscado.inventario>0){
                     carrito[posicionProducto].cantidad +=1
                     carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
                     productoBuscado.restarInventario(1)
                     console.log(productoBuscado.inventario)
-                } else if (posicionProducto==-1 && productoBuscado.inventario>=1){
+                } else if (posicionProducto===-1 && productoBuscado.inventario>0){
                     carrito.push({
                         id : productoBuscado.id, 
                         nombre : productoBuscado.nombre, 
