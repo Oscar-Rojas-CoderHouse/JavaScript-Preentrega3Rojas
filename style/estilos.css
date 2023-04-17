@@ -93,7 +93,7 @@ header nav .navDerecho .carritoUsuario{
     position: absolute;
     top: 70px;
     right: 0px;
-    z-index: 1;
+    z-index: 3;
 }
 header nav .navDerecho .carritoUsuario .itemCarro{
     display: flex;
@@ -217,6 +217,11 @@ header nav .navDerecho .inactivo{
 }
 
 /* ----Main - Pagina Productos---- */
+
+.carrusel{
+    width: 80%;
+    margin: 0 auto;
+}
 .carrusel div div div img {
     height: 60vh;
     width: 100%;

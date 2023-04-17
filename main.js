@@ -360,7 +360,6 @@ function agregarProducto (e){
                     carrito[posicionProducto].cantidad +=1
                     carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
                     productoBuscado.restarInventario(1)
-                    console.log(productoBuscado.inventario)
                 } else if (posicionProducto===-1 && productoBuscado.inventario>0){
                     carrito.push({
                         id : productoBuscado.id, 
@@ -370,6 +369,8 @@ function agregarProducto (e){
                         subtotal : productoBuscado.precio * 1
                     })
                     productoBuscado.restarInventario(1)
+                } else if(productoBuscado.inventario ===0){
+                    productoBuscado.restarInventario(0)
                 }
                 renderCarrito(carrito, listaProductosCarro)
                 localStorage.setItem("carrito", JSON.stringify(carrito))

@@ -18,7 +18,7 @@ class Productos {
     restarInventario(unidades){
         if (this.inventario>0){
             this.inventario -= unidades
-        } else if(this.inventario == 0){
+        } else if(this.inventario === 0){
             alert(`No hay unidades disponibles del producto ${this.nombre}`)
         }
     }
