@@ -149,7 +149,7 @@ const arrayProductos = [
         precioUnitario: 82000,
         inventario: 15,
         categoria: "Postres",
-        urlImagen: "https://www.lamigueria.com.co/wp-content/uploads/2022/07/FRUTOS-ROJOS-600x495.jpg"
+        urlImagen: "https://www.lamigueria.com.co/wp-content/uploads/2022/07/LIMON-600x495.jpg"
     },
     {
         id:20,
@@ -228,39 +228,86 @@ const arrayProductos = [
 const productos = arrayProductos.map(function (producto) {
     return new Productos(producto.id, producto.nombre, producto.precioUnitario, producto.inventario, producto.categoria, producto.urlImagen)})
 
-function renderProductos(listaProductos, nodoPadre){
-    nodoPadre.innerHTML = ""
-    for (producto of listaProductos){
-        nodoPadre.innerHTML += `<div class="item">
-        <img src=${producto.imagen} alt=${producto.categoria}>
-        <p>${producto.nombre}</p>
-        <p>Precio: $${producto.precio}</p>
-        <button class="botones" id="${producto.id}">Agregar al carrito</button>
-        </div>`
 
-        const productoAgregado = document.querySelector()
-    }
+function renderProductos(listaProductos, nodoPadre){
+    nodoPadre.innerHTML = " "
+    listaProductos.forEach(produc => {
+        let tarjetaProducto = document.createElement("div")
+        tarjetaProducto.className = "item"
+        
+        tarjetaProducto.innerHTML += `
+        <img src=${produc.imagen} alt=${produc.categoria}>
+        <p>${produc.nombre}</p>
+        <p>Precio: $${produc.precio}</p>
+        <button class="botones" id="${produc.id}">Agregar al carrito</button>
+        `
+
+        nodoPadre.appendChild(tarjetaProducto)
+
+        let btnProducto = document.getElementById(produc.id)
+        btnProducto.addEventListener("click", agregarProducto)
+    })
 }
 
-// -----Variables de elementos del HTML
+function renderCarrito (listaProductos, nodoPadre) {
+    let divCarrito
+    nodoPadre.innerHTML = " "
+    listaProductos.forEach(producto => {
+        divCarrito = document.createElement("div")
+        divCarrito.className = "itemCarro"
+        divCarrito.innerHTML += `
+        <h5>${producto.nombre}</h5>
+        <p>${producto.cantidad}</p>
+        <p>$${producto.subtotal}</p>
+        `
+        nodoPadre.appendChild(divCarrito)
+    })
+
+    let total = carrito.reduce((acumulador, producto) => acumulador + producto.subtotal, 0)
+    
+    let etiquetaTotal = document.createElement("div")
+    etiquetaTotal.className = "subtotal"
+
+    etiquetaTotal.innerHTML += `
+    <h5>Total:</h5>
+    <p>$${total}</p>
+    `
+    nodoPadre.appendChild(etiquetaTotal)
+
+    let etiquetaFinalizar = document.createElement("div")
+    etiquetaFinalizar.className = "contenedorBtn"
+
+    etiquetaFinalizar.innerHTML = `
+    <button class="botones" id="finalizarCompra">Comprar</button>
+    `
+    nodoPadre.appendChild(etiquetaFinalizar)
+
+    const btnComprar = document.querySelector("#finalizarCompra")
+    btnComprar.addEventListener("click", vaciarCarrito)
+}
+
+
+
+// -----Variables que almacenan elementos del HTML
 const sectionRenderProductos = document.querySelector(".renderProductos")
 const imagenPanes = document.querySelector("#panes")
 const imagenPasteles = document.querySelector("#pasteles")
 const imagenPostres = document.querySelector("#postres")
 const imagenTortas = document.querySelector("#tortas")
 const imagenOtros = document.querySelector("#otros")
-const carritoDOM = document.querySelector("#carrito")
+const iconCarritoDOM = document.querySelector("#carrito")
 const listaProductosCarro = document.querySelector(".carritoUsuario")
 
-renderProductos(productos, sectionRenderProductos)
 
+renderProductos(productos, sectionRenderProductos)
 // ----- Manejador de Eventos
 imagenPanes.addEventListener("click", filtradoPanes)
 imagenPasteles.addEventListener("click", filtradoPasteles)
 imagenPostres.addEventListener("click", filtradoPostres)
 imagenTortas.addEventListener("click", filtradoTortas)
 imagenOtros.addEventListener("click", filtradoOtros)
-carritoDOM.addEventListener("click", toggleCarrito)
+iconCarritoDOM.addEventListener("click", toggleCarrito)
+
 
 // ----- Funciones Eventos
 function filtradoPanes (){
@@ -293,5 +340,42 @@ function toggleCarrito (){
     
 }
 
-const carrito = []
+function vaciarCarrito (){
+    alert("Gracias por la compra realizada\nHasta pronto!!!")
+    localStorage.removeItem("carrito")
+    carrito = []
+    renderCarrito(carrito, listaProductosCarro)
+}
+
+let carrito = []
+
+if (localStorage.getItem("carrito")){
+    carrito = JSON.parse(localStorage.getItem("carrito"))
+    renderCarrito(carrito, listaProductosCarro)
+}
+
+function agregarProducto (e){
+    let productoBuscado = productos.find(producto => producto.id == e.target.id)
+            if (productoBuscado){
+                let posicionProducto = carrito.findIndex(producto => producto.id === productoBuscado.id)
+                if (posicionProducto != -1 && productoBuscado.inventario>=1){
+                    carrito[posicionProducto].cantidad +=1
+                    carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
+                    productoBuscado.restarInventario(1)
+                    console.log(productoBuscado.inventario)
+                } else if (posicionProducto==-1 && productoBuscado.inventario>=1){
+                    carrito.push({
+                        id : productoBuscado.id, 
+                        nombre : productoBuscado.nombre, 
+                        precio : productoBuscado.precio, 
+                        cantidad : 1,
+                        subtotal : productoBuscado.precio * 1
+                    })
+                    productoBuscado.restarInventario(1)
+                }
+                renderCarrito(carrito, listaProductosCarro)
+                localStorage.setItem("carrito", JSON.stringify(carrito))
+            }
+    }
+
 

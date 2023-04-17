@@ -16,10 +16,10 @@ class Productos {
         }
     }
     restarInventario(unidades){
-        if (unidades < this.inventario){
+        if ((unidades < this.inventario) && this.inventario>0){
             this.inventario -= unidades
         } else {
-            alert(`No hay ${unidades} unidades disponibles del producto ${this.nombre}\nActualmente contamos con ${this.inventario} unidades`)
+            alert(`No hay unidades disponibles del producto ${this.nombre}`)
         }
     }
     estaAgotado(){
