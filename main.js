@@ -229,11 +229,11 @@ let productos = []
 
 if(localStorage.getItem("productos")){
     productosLocal = JSON.parse(localStorage.getItem("productos"))
-    productos = productosLocal.map(function (producto) {
-        return new Productos(producto.id, producto.nombre, producto.precio, producto.inventario, producto.categoria, producto.imagen)})
+    productos = productosLocal.map(function ({id,nombre, precio, inventario, categoria, imagen}) {
+        return new Productos(id, nombre, precio, inventario, categoria, imagen)})
 } else{
-    productos = arrayProductos.map(function (producto) {
-        return new Productos(producto.id, producto.nombre, producto.precioUnitario, producto.inventario, producto.categoria, producto.urlImagen)})
+    productos = arrayProductos.map(function ({id, nombre, precioUnitario, inventario, categoria, urlImagen}) {
+        return new Productos(id, nombre, precioUnitario, inventario, categoria, urlImagen)})
     
     localStorage.setItem("productos", JSON.stringify(productos)) 
 }
@@ -241,38 +241,38 @@ if(localStorage.getItem("productos")){
 
 function renderProductos(listaProductos, nodoPadre){
     nodoPadre.innerHTML = " "
-    listaProductos.forEach(produc => {
+    listaProductos.forEach(({imagen, categoria, nombre, precio, id}) => {
         let tarjetaProducto = document.createElement("div")
         tarjetaProducto.className = "item"
         
         tarjetaProducto.innerHTML += `
-        <img src=${produc.imagen} alt=${produc.categoria}>
-        <p>${produc.nombre}</p>
-        <p>Precio: $${produc.precio}</p>
-        <button class="botones" id="${produc.id}">Agregar al carrito</button>
+        <img src=${imagen} alt=${categoria}>
+        <p>${nombre}</p>
+        <p>Precio: $${precio}</p>
+        <button class="botones" id="${id}">Agregar al carrito</button>
         `
 
         nodoPadre.appendChild(tarjetaProducto)
 
-        let btnProducto = document.getElementById(produc.id)
+        let btnProducto = document.getElementById(id)
         btnProducto.addEventListener("click", agregarProducto)
     })
 }
 
 function renderCarrito (listaProductos, nodoPadre) {
     nodoPadre.innerHTML = " "
-    listaProductos.forEach(producto => {
+    listaProductos.forEach(({nombre, cantidad, subtotal}) => {
         let divCarrito = document.createElement("div")
         divCarrito.className = "itemCarro"
         divCarrito.innerHTML += `
-        <h5>${producto.nombre}</h5>
-        <p>${producto.cantidad}</p>
-        <p>$${producto.subtotal}</p>
+        <h5>${nombre}</h5>
+        <p>${cantidad}</p>
+        <p>$${subtotal}</p>
         `
         nodoPadre.appendChild(divCarrito)
     })
 
-    let total = carrito.reduce((acumulador, producto) => acumulador + producto.subtotal, 0)
+    let total = carrito.reduce((acumulador, {subtotal}) => acumulador + subtotal, 0)
     
     let etiquetaTotal = document.createElement("div")
     etiquetaTotal.className = "subtotal"
@@ -293,6 +293,35 @@ function renderCarrito (listaProductos, nodoPadre) {
 
     const btnComprar = document.querySelector("#finalizarCompra")
     btnComprar.addEventListener("click", vaciarCarrito)
+}
+
+function renderFiltradoPorCategoria (categoria, tagRender){
+    const listaPorCategoria = productos.filter(producto => producto.categoria == categoria)
+    renderProductos(listaPorCategoria, tagRender)
+}
+
+function alerta (texto, color1, color2){
+    Toastify({
+        text: texto,
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+          background: `linear-gradient(to right, ${color1}, ${color2})`,
+        },
+      }).showToast();
+}
+
+function mostrarAlerta (estadoProducto){
+    if (estadoProducto == "stock") {
+        alerta("Producto agregado", "#00b09b", "#96c93d")
+    } else if (estadoProducto == "agotado"){
+        alerta("Producto agotado", "#d90303", "#dd8603")
+    }
+    
 }
 
 // -----Variables que almacenan elementos del HTML
@@ -319,28 +348,23 @@ iconCarritoDOM.addEventListener("click", toggleCarrito)
 
 // ----- Funciones Eventos
 function filtradoPanes (){
-    const listaPanes = productos.filter(producto => producto.categoria == "Panes")
-    renderProductos(listaPanes, sectionRenderProductos)
+    renderFiltradoPorCategoria("Panes", sectionRenderProductos)
 }
 
 function filtradoPasteles (){
-    const listaPasteles = productos.filter(producto => producto.categoria == "Pasteles")
-    renderProductos(listaPasteles, sectionRenderProductos)
+    renderFiltradoPorCategoria("Pasteles", sectionRenderProductos)
 }
 
 function filtradoPostres (){
-    const listaPostres = productos.filter(producto => producto.categoria == "Postres")
-    renderProductos(listaPostres, sectionRenderProductos)
+    renderFiltradoPorCategoria("Postres", sectionRenderProductos)
 }
 
 function filtradoTortas (){
-    const listaTortas = productos.filter(producto => producto.categoria == "Tortas")
-    renderProductos(listaTortas, sectionRenderProductos)
+    renderFiltradoPorCategoria("Tortas", sectionRenderProductos)
 }
 
 function filtradoOtros (){
-    const listaOtros = productos.filter(producto => producto.categoria == "Otros")
-    renderProductos(listaOtros, sectionRenderProductos)
+    renderFiltradoPorCategoria("Otros", sectionRenderProductos)
 }
 
 function toggleCarrito (){
@@ -361,11 +385,7 @@ function vaciarCarrito (){
 
 renderProductos(productos, sectionRenderProductos)
 
-let carrito = []
-if (localStorage.getItem("carrito")){
-    carrito = JSON.parse(localStorage.getItem("carrito"))
-    renderCarrito(carrito, listaProductosCarro)
-}
+let carrito = localStorage.getItem("carrito") ? JSON.parse(localStorage.getItem("carrito")) : []
 
 renderCarrito(carrito, listaProductosCarro)
 
@@ -374,8 +394,9 @@ function agregarProducto (e){
             if (productoBuscado){
                 let posicionProducto = carrito.findIndex(producto => producto.id === productoBuscado.id)
                 if (posicionProducto != -1 && productoBuscado.inventario>0){
-                    carrito[posicionProducto].cantidad +=1
+                    carrito[posicionProducto].cantidad ++
                     carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
+                    mostrarAlerta("stock")
                 } else if (posicionProducto===-1 && productoBuscado.inventario>0){
                     carrito.push({
                         id : productoBuscado.id, 
@@ -384,7 +405,9 @@ function agregarProducto (e){
                         cantidad : 1,
                         subtotal : productoBuscado.precio * 1
                     })
+                    mostrarAlerta("stock")
                 }
+                productoBuscado.inventario === 0 && mostrarAlerta("agotado")
                 productoBuscado.restarInventario(1)
                 renderCarrito(carrito, listaProductosCarro)
                 localStorage.setItem("carrito", JSON.stringify(carrito))

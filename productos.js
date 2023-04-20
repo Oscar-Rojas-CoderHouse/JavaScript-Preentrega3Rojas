@@ -8,18 +8,9 @@ class Productos {
         this.imagen = imagen
         this.agotado = agotado
     }
-    ingresarModificarInventario(unidades){
-        if (!isNaN(unidades) && unidades > 0){
-            this.inventario += unidades
-        } else {
-            alert("Ingresa un número valido de unidades")
-        }
-    }
     restarInventario(unidades){
         if (this.inventario>0){
             this.inventario -= unidades
-        } else if(this.inventario === 0){
-            alert(`No hay unidades disponibles del producto ${this.nombre}`)
         }
     }
     estaAgotado(){
