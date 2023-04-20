@@ -225,8 +225,18 @@ const arrayProductos = [
     },
 ]
 
-const productos = arrayProductos.map(function (producto) {
-    return new Productos(producto.id, producto.nombre, producto.precioUnitario, producto.inventario, producto.categoria, producto.urlImagen)})
+let productos = []
+
+if(localStorage.getItem("productos")){
+    productosLocal = JSON.parse(localStorage.getItem("productos"))
+    productos = productosLocal.map(function (producto) {
+        return new Productos(producto.id, producto.nombre, producto.precio, producto.inventario, producto.categoria, producto.imagen)})
+} else{
+    productos = arrayProductos.map(function (producto) {
+        return new Productos(producto.id, producto.nombre, producto.precioUnitario, producto.inventario, producto.categoria, producto.urlImagen)})
+    
+    localStorage.setItem("productos", JSON.stringify(productos)) 
+}
 
 
 function renderProductos(listaProductos, nodoPadre){
@@ -250,10 +260,9 @@ function renderProductos(listaProductos, nodoPadre){
 }
 
 function renderCarrito (listaProductos, nodoPadre) {
-    let divCarrito
     nodoPadre.innerHTML = " "
     listaProductos.forEach(producto => {
-        divCarrito = document.createElement("div")
+        let divCarrito = document.createElement("div")
         divCarrito.className = "itemCarro"
         divCarrito.innerHTML += `
         <h5>${producto.nombre}</h5>
@@ -297,7 +306,7 @@ const iconCarritoDOM = document.querySelector("#carrito")
 const listaProductosCarro = document.querySelector(".carritoUsuario")
 
 
-renderProductos(productos, sectionRenderProductos)
+
 // ----- Manejador de Eventos
 imagenPanes.addEventListener("click", filtradoPanes)
 imagenPasteles.addEventListener("click", filtradoPasteles)
@@ -305,6 +314,7 @@ imagenPostres.addEventListener("click", filtradoPostres)
 imagenTortas.addEventListener("click", filtradoTortas)
 imagenOtros.addEventListener("click", filtradoOtros)
 iconCarritoDOM.addEventListener("click", toggleCarrito)
+// document.addEventListener("DOMContentLoaded", inicioRenderProductos)
 
 
 // ----- Funciones Eventos
@@ -345,12 +355,19 @@ function vaciarCarrito (){
     renderCarrito(carrito, listaProductosCarro)
 }
 
-let carrito = []
+// function inicioRenderProductos (){
+//     renderProductos(productos, sectionRenderProductos)
+// }
 
+renderProductos(productos, sectionRenderProductos)
+
+let carrito = []
 if (localStorage.getItem("carrito")){
     carrito = JSON.parse(localStorage.getItem("carrito"))
     renderCarrito(carrito, listaProductosCarro)
 }
+
+renderCarrito(carrito, listaProductosCarro)
 
 function agregarProducto (e){
     let productoBuscado = productos.find(producto => producto.id == e.target.id)
@@ -359,7 +376,6 @@ function agregarProducto (e){
                 if (posicionProducto != -1 && productoBuscado.inventario>0){
                     carrito[posicionProducto].cantidad +=1
                     carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
-                    productoBuscado.restarInventario(1)
                 } else if (posicionProducto===-1 && productoBuscado.inventario>0){
                     carrito.push({
                         id : productoBuscado.id, 
@@ -368,12 +384,11 @@ function agregarProducto (e){
                         cantidad : 1,
                         subtotal : productoBuscado.precio * 1
                     })
-                    productoBuscado.restarInventario(1)
-                } else if(productoBuscado.inventario ===0){
-                    productoBuscado.restarInventario(0)
                 }
+                productoBuscado.restarInventario(1)
                 renderCarrito(carrito, listaProductosCarro)
                 localStorage.setItem("carrito", JSON.stringify(carrito))
+                localStorage.setItem("productos", JSON.stringify(productos))
             }
     }
 
