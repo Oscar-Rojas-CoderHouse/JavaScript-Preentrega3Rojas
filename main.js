@@ -300,7 +300,7 @@ function renderFiltradoPorCategoria (categoria, tagRender){
     renderProductos(listaPorCategoria, tagRender)
 }
 
-function alerta (texto, color1, color2){
+function alerta (texto, icon, color1, color2){
     Toastify({
         text: texto,
         duration: 3000,
@@ -309,6 +309,7 @@ function alerta (texto, color1, color2){
         gravity: "top",
         position: "right",
         stopOnFocus: true,
+        avatar: icon,
         style: {
           background: `linear-gradient(to right, ${color1}, ${color2})`,
         },
@@ -317,11 +318,19 @@ function alerta (texto, color1, color2){
 
 function mostrarAlerta (estadoProducto){
     if (estadoProducto == "stock") {
-        alerta("Producto agregado", "#00b09b", "#96c93d")
+        alerta("Producto agregado", "https://img.icons8.com/arcade/1x/checkmark.png","#00b09b", "#96c93d")
     } else if (estadoProducto == "agotado"){
-        alerta("Producto agotado", "#d90303", "#dd8603")
+        alerta("Producto agotado", "https://img.icons8.com/arcade/1x/delete-sign.png", "#d90303", "#dd8603")
     }
-    
+}
+
+function alertaFinalizarCompra (){
+    Swal.fire({
+        title: 'Gracias por su compra',
+        text: 'Se abrirá una ventana emergente para finalizar el proceso',
+        icon: 'success',
+        confirmButtonText: 'Confirmar'
+      })
 }
 
 // -----Variables que almacenan elementos del HTML
@@ -373,10 +382,12 @@ function toggleCarrito (){
 }
 
 function vaciarCarrito (){
-    alert("Gracias por la compra realizada\nHasta pronto!!!")
+    alertaFinalizarCompra()
     localStorage.removeItem("carrito")
     carrito = []
     renderCarrito(carrito, listaProductosCarro)
+    listaProductosCarro.classList.toggle("inactivo")
+    listaProductosCarro.innerHTML = ""
 }
 
 // function inicioRenderProductos (){
@@ -387,7 +398,7 @@ renderProductos(productos, sectionRenderProductos)
 
 let carrito = localStorage.getItem("carrito") ? JSON.parse(localStorage.getItem("carrito")) : []
 
-renderCarrito(carrito, listaProductosCarro)
+// renderCarrito(carrito, listaProductosCarro)
 
 function agregarProducto (e){
     let productoBuscado = productos.find(producto => producto.id == e.target.id)
