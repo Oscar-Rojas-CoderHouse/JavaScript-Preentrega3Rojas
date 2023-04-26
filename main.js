@@ -5,24 +5,26 @@ fetch("../productos.json")
     })
     .catch(error => console.log(error))
 
-function miPrograma(productos){
-    if(localStorage.getItem("productos")){
+function miPrograma(productos) {
+    if (localStorage.getItem("productos")) {
         productosLocal = JSON.parse(localStorage.getItem("productos"))
-        productos = productosLocal.map(function ({id,nombre, precio, inventario, categoria, imagen}) {
-            return new Productos(id, nombre, precio, inventario, categoria, imagen)})
-    } else{
-        productos = productos.map(function ({id, nombre, precioUnitario, inventario, categoria, urlImagen}) {
-            return new Productos(id, nombre, precioUnitario, inventario, categoria, urlImagen)})
-        
-        localStorage.setItem("productos", JSON.stringify(productos)) 
+        productos = productosLocal.map(function ({ id, nombre, precio, inventario, categoria, imagen }) {
+            return new Productos(id, nombre, precio, inventario, categoria, imagen)
+        })
+    } else {
+        productos = productos.map(function ({ id, nombre, precioUnitario, inventario, categoria, urlImagen }) {
+            return new Productos(id, nombre, precioUnitario, inventario, categoria, urlImagen)
+        })
+
+        localStorage.setItem("productos", JSON.stringify(productos))
     }
 
-    function renderProductos(listaProductos, nodoPadre){
+    function renderProductos(listaProductos, nodoPadre) {
         nodoPadre.innerHTML = " "
-        listaProductos.forEach(({imagen, categoria, nombre, precio, id}) => {
+        listaProductos.forEach(({ imagen, categoria, nombre, precio, id }) => {
             let tarjetaProducto = document.createElement("div")
             tarjetaProducto.className = "item"
-            
+
             tarjetaProducto.innerHTML += `
             <img src=${imagen} alt=${categoria}>
             <p>${nombre}</p>
@@ -37,10 +39,10 @@ function miPrograma(productos){
         })
     }
 
-    function renderCarrito (listaProductos, nodoPadre) {
-        if (listaProductos.length > 0){
+    function renderCarrito(listaProductos, nodoPadre) {
+        if (listaProductos.length > 0) {
             nodoPadre.innerHTML = " "
-            listaProductos.forEach(({id, nombre, cantidad, subtotal}) => {
+            listaProductos.forEach(({ id, nombre, cantidad, subtotal }) => {
                 let divCarrito = document.createElement("div")
                 divCarrito.className = "itemCarro"
                 divCarrito.innerHTML += `
@@ -51,11 +53,11 @@ function miPrograma(productos){
                 `
                 nodoPadre.appendChild(divCarrito)
 
-                const imgEliminarProducto = document.getElementById("del"+id)
+                const imgEliminarProducto = document.getElementById("del" + id)
                 imgEliminarProducto.addEventListener("click", deleteProductoCarrito)
             })
 
-            let total = carrito.reduce((acumulador, {subtotal}) => acumulador + subtotal, 0)
+            let total = carrito.reduce((acumulador, { subtotal }) => acumulador + subtotal, 0)
             let etiquetaTotal = document.createElement("div")
             etiquetaTotal.className = "subtotal"
             etiquetaTotal.innerHTML += `
@@ -82,15 +84,15 @@ function miPrograma(productos){
             <h5>Agrega productos a tu carrito</h5>
             `
             nodoPadre.appendChild(etiquetaContenedora)
-        }  
+        }
     }
 
-    function renderFiltradoPorCategoria (categoria, tagRender){
+    function renderFiltradoPorCategoria(categoria, tagRender) {
         const listaPorCategoria = productos.filter(producto => producto.categoria == categoria)
         renderProductos(listaPorCategoria, tagRender)
     }
 
-    function alerta (texto, icon, color1, color2){
+    function alerta(texto, icon, color1, color2) {
         Toastify({
             text: texto,
             duration: 3000,
@@ -101,22 +103,22 @@ function miPrograma(productos){
             stopOnFocus: true,
             avatar: icon,
             style: {
-            background: `linear-gradient(to right, ${color1}, ${color2})`,
+                background: `linear-gradient(to right, ${color1}, ${color2})`,
             },
         }).showToast();
     }
 
-    function mostrarAlerta (estadoProducto){
+    function mostrarAlerta(estadoProducto) {
         if (estadoProducto == "stock") {
-            alerta("Producto agregado", "https://img.icons8.com/arcade/1x/checkmark.png","#00b09b", "#96c93d")
-        } else if (estadoProducto == "agotado"){
+            alerta("Producto agregado", "https://img.icons8.com/arcade/1x/checkmark.png", "#00b09b", "#96c93d")
+        } else if (estadoProducto == "agotado") {
             alerta("Producto agotado", "https://img.icons8.com/arcade/1x/delete-sign.png", "#d90303", "#dd8603")
-        } else if (estadoProducto == "eliminado"){
+        } else if (estadoProducto == "eliminado") {
             alerta("Producto eliminado", "https://img.icons8.com/stickers/1x/delete.png", "#1103f6", "#00bdb1")
         }
     }
 
-    function alertaFinalizarCompra (){
+    function alertaFinalizarCompra() {
         Swal.fire({
             title: 'Gracias por su compra',
             text: 'Se abrirá una ventana emergente para finalizar el proceso',
@@ -144,36 +146,36 @@ function miPrograma(productos){
     iconCarritoDOM.addEventListener("click", toggleCarrito)
 
     // ----- Funciones Eventos
-    function filtradoPanes (){
+    function filtradoPanes() {
         renderFiltradoPorCategoria("Panes", sectionRenderProductos)
     }
 
-    function filtradoPasteles (){
+    function filtradoPasteles() {
         renderFiltradoPorCategoria("Pasteles", sectionRenderProductos)
     }
 
-    function filtradoPostres (){
+    function filtradoPostres() {
         renderFiltradoPorCategoria("Postres", sectionRenderProductos)
     }
 
-    function filtradoTortas (){
+    function filtradoTortas() {
         renderFiltradoPorCategoria("Tortas", sectionRenderProductos)
     }
 
-    function filtradoOtros (){
+    function filtradoOtros() {
         renderFiltradoPorCategoria("Otros", sectionRenderProductos)
     }
 
-    function toggleCarrito (){
+    function toggleCarrito() {
         listaProductosCarro.classList.toggle("inactivo")
     }
 
-    function deleteProductoCarrito (e){
+    function deleteProductoCarrito(e) {
         mostrarAlerta("eliminado")
         let productoBuscadoCarrito = carrito.find(producto => producto.id == e.target.id.slice(3))
-        if (productoBuscadoCarrito){
+        if (productoBuscadoCarrito) {
             let posicionProductoCarrito = carrito.findIndex(producto => producto.id === productoBuscadoCarrito.id)
-            carrito.splice(posicionProductoCarrito,1)
+            carrito.splice(posicionProductoCarrito, 1)
             renderCarrito(carrito, listaProductosCarro)
             localStorage.setItem("carrito", JSON.stringify(carrito))
         }
@@ -183,7 +185,7 @@ function miPrograma(productos){
         localStorage.setItem("productos", JSON.stringify(productos))
     }
 
-    function vaciarCarrito (){
+    function vaciarCarrito() {
         alertaFinalizarCompra()
         localStorage.removeItem("carrito")
         carrito = []
@@ -196,29 +198,29 @@ function miPrograma(productos){
     let carrito = localStorage.getItem("carrito") ? JSON.parse(localStorage.getItem("carrito")) : []
     renderCarrito(carrito, listaProductosCarro)
 
-    function agregarProducto (e){
+    function agregarProducto(e) {
         let productoBuscado = productos.find(producto => producto.id == e.target.id)
-                if (productoBuscado){
-                    let posicionProducto = carrito.findIndex(producto => producto.id === productoBuscado.id)
-                    if (posicionProducto != -1 && productoBuscado.inventario>0){
-                        carrito[posicionProducto].cantidad ++
-                        carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
-                        mostrarAlerta("stock")
-                    } else if (posicionProducto===-1 && productoBuscado.inventario>0){
-                        carrito.push({
-                            id : productoBuscado.id, 
-                            nombre : productoBuscado.nombre, 
-                            precio : productoBuscado.precio, 
-                            cantidad : 1,
-                            subtotal : productoBuscado.precio * 1
-                        })
-                        mostrarAlerta("stock")
-                    }
-                    productoBuscado.inventario === 0 && mostrarAlerta("agotado")
-                    productoBuscado.restarInventario(1)
-                    carrito.length > 0 && renderCarrito(carrito, listaProductosCarro)
-                    localStorage.setItem("carrito", JSON.stringify(carrito))
-                    localStorage.setItem("productos", JSON.stringify(productos))
-                }
+        if (productoBuscado) {
+            let posicionProducto = carrito.findIndex(producto => producto.id === productoBuscado.id)
+            if (posicionProducto != -1 && productoBuscado.inventario > 0) {
+                carrito[posicionProducto].cantidad++
+                carrito[posicionProducto].subtotal = carrito[posicionProducto].precio * carrito[posicionProducto].cantidad
+                mostrarAlerta("stock")
+            } else if (posicionProducto === -1 && productoBuscado.inventario > 0) {
+                carrito.push({
+                    id: productoBuscado.id,
+                    nombre: productoBuscado.nombre,
+                    precio: productoBuscado.precio,
+                    cantidad: 1,
+                    subtotal: productoBuscado.precio * 1
+                })
+                mostrarAlerta("stock")
+            }
+            productoBuscado.inventario === 0 && mostrarAlerta("agotado")
+            productoBuscado.restarInventario(1)
+            carrito.length > 0 && renderCarrito(carrito, listaProductosCarro)
+            localStorage.setItem("carrito", JSON.stringify(carrito))
+            localStorage.setItem("productos", JSON.stringify(productos))
         }
+    }
 }
