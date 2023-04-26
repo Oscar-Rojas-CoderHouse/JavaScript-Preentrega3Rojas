@@ -38,39 +38,51 @@ function miPrograma(productos){
     }
 
     function renderCarrito (listaProductos, nodoPadre) {
-        nodoPadre.innerHTML = " "
-        listaProductos.forEach(({nombre, cantidad, subtotal}) => {
-            let divCarrito = document.createElement("div")
-            divCarrito.className = "itemCarro"
-            divCarrito.innerHTML += `
-            <h5>${nombre}</h5>
-            <p>${cantidad}</p>
-            <p>$${subtotal}</p>
+        if (listaProductos.length > 0){
+            nodoPadre.innerHTML = " "
+            listaProductos.forEach(({id, nombre, cantidad, subtotal}) => {
+                let divCarrito = document.createElement("div")
+                divCarrito.className = "itemCarro"
+                divCarrito.innerHTML += `
+                <h5>${nombre}</h5>
+                <p>${cantidad}</p>
+                <p>$${subtotal}</p>
+                <img id="del${id}" src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/1x/external-trash-can-office-and-office-supplies-flaticons-lineal-color-flat-icons-2.png">
+                `
+                nodoPadre.appendChild(divCarrito)
+
+                const imgEliminarProducto = document.getElementById("del"+id)
+                imgEliminarProducto.addEventListener("click", deleteProductoCarrito)
+            })
+
+            let total = carrito.reduce((acumulador, {subtotal}) => acumulador + subtotal, 0)
+            let etiquetaTotal = document.createElement("div")
+            etiquetaTotal.className = "subtotal"
+            etiquetaTotal.innerHTML += `
+            <h5>Total:</h5>
+            <p>$${total}</p>
             `
-            nodoPadre.appendChild(divCarrito)
-        })
+            nodoPadre.appendChild(etiquetaTotal)
 
-        let total = carrito.reduce((acumulador, {subtotal}) => acumulador + subtotal, 0)
-        
-        let etiquetaTotal = document.createElement("div")
-        etiquetaTotal.className = "subtotal"
+            let etiquetaFinalizar = document.createElement("div")
+            etiquetaFinalizar.className = "contenedorBtn"
+            etiquetaFinalizar.innerHTML = `
+            <button class="botones" id="finalizarCompra">Comprar</button>
+            `
+            nodoPadre.appendChild(etiquetaFinalizar)
 
-        etiquetaTotal.innerHTML += `
-        <h5>Total:</h5>
-        <p>$${total}</p>
-        `
-        nodoPadre.appendChild(etiquetaTotal)
-
-        let etiquetaFinalizar = document.createElement("div")
-        etiquetaFinalizar.className = "contenedorBtn"
-
-        etiquetaFinalizar.innerHTML = `
-        <button class="botones" id="finalizarCompra">Comprar</button>
-        `
-        nodoPadre.appendChild(etiquetaFinalizar)
-
-        const btnComprar = document.querySelector("#finalizarCompra")
-        btnComprar.addEventListener("click", vaciarCarrito)
+            const btnComprar = document.querySelector("#finalizarCompra")
+            btnComprar.addEventListener("click", vaciarCarrito)
+        } else {
+            nodoPadre.innerHTML = ""
+            const etiquetaContenedora = document.createElement("div")
+            etiquetaContenedora.className = "contenedorSinProductos"
+            etiquetaContenedora.innerHTML = `
+            <img src="https://img.icons8.com/fluency/1x/nothing-found.png">
+            <h5>Agrega productos a tu carrito</h5>
+            `
+            nodoPadre.appendChild(etiquetaContenedora)
+        }  
     }
 
     function renderFiltradoPorCategoria (categoria, tagRender){
@@ -99,6 +111,8 @@ function miPrograma(productos){
             alerta("Producto agregado", "https://img.icons8.com/arcade/1x/checkmark.png","#00b09b", "#96c93d")
         } else if (estadoProducto == "agotado"){
             alerta("Producto agotado", "https://img.icons8.com/arcade/1x/delete-sign.png", "#d90303", "#dd8603")
+        } else if (estadoProducto == "eliminado"){
+            alerta("Producto eliminado", "https://img.icons8.com/stickers/1x/delete.png", "#1103f6", "#00bdb1")
         }
     }
 
@@ -154,20 +168,33 @@ function miPrograma(productos){
         listaProductosCarro.classList.toggle("inactivo")
     }
 
+    function deleteProductoCarrito (e){
+        mostrarAlerta("eliminado")
+        let productoBuscadoCarrito = carrito.find(producto => producto.id == e.target.id.slice(3))
+        if (productoBuscadoCarrito){
+            let posicionProductoCarrito = carrito.findIndex(producto => producto.id === productoBuscadoCarrito.id)
+            carrito.splice(posicionProductoCarrito,1)
+            renderCarrito(carrito, listaProductosCarro)
+            localStorage.setItem("carrito", JSON.stringify(carrito))
+        }
+        let posicionProductoArray = productos.findIndex(producto => producto.id === productoBuscadoCarrito.id)
+        let cantidad = productoBuscadoCarrito.cantidad
+        productos[posicionProductoArray].sumarInventario(cantidad)
+        localStorage.setItem("productos", JSON.stringify(productos))
+    }
+
     function vaciarCarrito (){
         alertaFinalizarCompra()
         localStorage.removeItem("carrito")
         carrito = []
         renderCarrito(carrito, listaProductosCarro)
         listaProductosCarro.classList.toggle("inactivo")
-        listaProductosCarro.innerHTML = ""
     }
 
     renderProductos(productos, sectionRenderProductos)
 
     let carrito = localStorage.getItem("carrito") ? JSON.parse(localStorage.getItem("carrito")) : []
-
-    carrito.length > 0 && renderCarrito(carrito, listaProductosCarro)
+    renderCarrito(carrito, listaProductosCarro)
 
     function agregarProducto (e){
         let productoBuscado = productos.find(producto => producto.id == e.target.id)
@@ -195,6 +222,3 @@ function miPrograma(productos){
                 }
         }
 }
-    
-
-

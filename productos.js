@@ -8,6 +8,9 @@ class Productos {
         this.imagen = imagen
         this.agotado = agotado
     }
+    sumarInventario(unidades){
+        this.inventario += unidades
+    }
     restarInventario(unidades){
         if (this.inventario>0){
             this.inventario -= unidades
