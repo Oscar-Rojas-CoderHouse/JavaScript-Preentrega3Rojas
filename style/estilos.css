@@ -65,17 +65,17 @@ header nav .navDerecho ul li{
     list-style: none;
     margin: 0 12px;
     font-size: var(--sm);
-    transition: 0.5s;
+    transition: 1s;
     padding-bottom: 4px;
 }
 header nav .navDerecho ul li:hover{
-    border-bottom: 1px solid var(--color-hero);
+    border-bottom: 1px solid var(--color-title);
 }
 header nav .navDerecho ul li:nth-child(2){
     border: none;
     transition: 2s;
 }
-header nav .navDerecho ul li:nth-child(4):hover{
+header nav .navDerecho ul li:nth-child(2):hover{
     transform: scale(1.2);
 }
 header nav .navDerecho ul li a{
@@ -168,74 +168,6 @@ header nav .navDerecho .inactivo{
     display: none;
 }
 
-/* ----Main - Pagina Index---- */
-.contenidoPrincipal .hero {
-    height: calc(100vh - 70px);
-    width: 100%;
-    background-image: url('https://images.pexels.com/photos/3734025/pexels-photo-3734025.jpeg?auto=compress&cs=tinysrgb&w=1600');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.contenidoPrincipal .hero h1 {
-    font-size: var(--h1);
-    color: var(--color-hero);
-}
-.contenidoPrincipal .hero p {
-    font-size: var(--md);
-    font-style: italic;
-    color: var(--color-hero);
-    margin-top: 24px;
-    margin-bottom: 50px;
-    font-weight: 300;
-}
-.contenidoPrincipal .bienvenidos, .nosotros {
-    width: 80%;
-    margin: 0 auto;
-}
-.contenidoPrincipal .bienvenidos div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-.contenidoPrincipal .bienvenidos div img,
-.nosotros div img{
-    width: 350px;
-    height: 450px;
-    object-fit: cover;
-}
-.contenidoPrincipal .bienvenidos div div{
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    margin-left: 60px;
-}
-.contenidoPrincipal .bienvenidos div div h3,
-.nosotros div div h3 {
-    font-size: var(--lg);
-    margin-bottom: 8px;
-}
-.contenidoPrincipal .nosotros div {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: center;
-}
-.contenidoPrincipal .nosotros div div{
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    margin-right: 60px;
-}
-
 /* ----Main - Pagina Productos---- */
 
 .carrusel{
@@ -251,7 +183,9 @@ header nav .navDerecho .inactivo{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 40px 0;
+    margin: 40px 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
 }
 .productos .filtros h3{
     font-size: var(--lg);
@@ -294,7 +228,6 @@ header nav .navDerecho .inactivo{
 .productos .renderProductos {
     display: flex;
     justify-content: space-evenly;
-
     flex-wrap: wrap;
 }
 .productos .renderProductos div{
@@ -302,6 +235,10 @@ header nav .navDerecho .inactivo{
     width: 170px;
     height: auto;
     overflow: hidden;
+    transition: 0.5s;
+}
+.productos .renderProductos div:hover{
+    box-shadow: 12px 12px 25px var(--color-title);
 }
 .productos .renderProductos div img{
     width: 100%;
@@ -311,7 +248,8 @@ header nav .navDerecho .inactivo{
 }
 .productos .renderProductos div p {
     font-size: calc(var(--sm) - 2px);
-    font-style: italic
+    font-style: italic;
+    padding: 0 6px;
 }
 .productos .renderProductos div p:nth-child(2){
     height: 42px;
